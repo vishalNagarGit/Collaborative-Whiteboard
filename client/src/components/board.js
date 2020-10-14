@@ -61,12 +61,12 @@ else if(drawing==="Pen")
 
 
 var emitedElements=[];   
-
+var Coordinates=[];
 
 socket.on('draw',(emmitedArray)=>{
-  console.log("emited array",emmitedArray);
+ // console.log("emited array",emmitedArray);
   
-  
+    
 
   emitedElements.forEach((element)=>
   {
@@ -87,6 +87,23 @@ socket.on('draw',(emmitedArray)=>{
 
  
   
+
+
+});
+
+socket.on('mouse',(coordinates)=>{
+ // console.log("hi");
+ //context.clearRect(0,0,window.innerWidth,window.innerHeight);
+ var  {X_mouse,Y_mouse}=Coordinates;
+ context.fillStyle='white';
+ context.fillRect(X_mouse,Y_mouse,10,10); 
+ Coordinates=coordinates;  
+    var  {X_mouse,Y_mouse}=Coordinates;
+  context.fillStyle='black';
+  context.fillRect(X_mouse,Y_mouse,10,10); 
+   // console.log(coordinates);
+   
+
 
 
 });
@@ -114,6 +131,8 @@ const Board=()=> {
      const [preY,setpreY]=useState('0');
      const [linepoints,setlinepoints]=useState([]);
      const [viewonly,setviewonly]=useState(false);
+     const [coordinates,setcoordinates]=useState([]);
+
   
     // const [isChanged,setChanged]=useState(false);
 
@@ -315,7 +334,14 @@ const Board=()=> {
   
     //handling the mouse motion
     const handleMouseMove=(event)=>{
-        if(!viewonly)
+      const {clientX,clientY}=event;
+      const X_mouse=clientX;
+       const Y_mouse=clientY;
+       setcoordinates({X_mouse,Y_mouse});
+       Coordinates=coordinates;
+         emmiter();
+      
+      if(!viewonly)
         {
       if(!drawing)
       return ;
@@ -355,6 +381,9 @@ const Board=()=> {
       const elementsCopy=[...elements];
        elementsCopy[index]=element;
        setelements(elementsCopy);
+      //  const X_mouse=X2;
+      //  const Y_mouse=Y2;
+      //  setcoordinates({X_mouse,Y_mouse});
        emmiter();
      //  Ctx.strokeRect(preX,preY,clientX,clientY);
      }
@@ -393,7 +422,8 @@ const Board=()=> {
   function emmiter()
     {
       socket.emit('draw',elements); 
-      console.log("emmited",elements);
+      socket.emit('mouse',coordinates);
+      console.log("emmited",coordinates);
 
     }
     

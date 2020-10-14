@@ -11,11 +11,18 @@ io.on('connection', socket=>{
     socket.join('room');
 
     console.log(socket.id);
+   // console.log("hi");
     socket.on('draw',(element)=>{
-        //console.log(element);
+    // console.log(element);
         
        socket.to('room').emit('draw',element);  
+    
     });
+     socket.on('mouse',(coordinates)=>{
+        socket.to('room').emit('mouse',coordinates);
+   // console.log(coordinates);
+    });
+
 
     // socket.on('element',(element)=>{
     //     console.log(element);
