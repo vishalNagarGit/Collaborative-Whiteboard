@@ -96,11 +96,11 @@ socket.on('mouse',(coordinates)=>{
  //context.clearRect(0,0,window.innerWidth,window.innerHeight);
  var  {X_mouse,Y_mouse}=Coordinates;
  context.fillStyle='white';
- context.fillRect(X_mouse,Y_mouse,10,10); 
+ context.fillRect(X_mouse-15,Y_mouse-80,10,10); 
  Coordinates=coordinates;  
     var  {X_mouse,Y_mouse}=Coordinates;
   context.fillStyle='black';
-  context.fillRect(X_mouse,Y_mouse,10,10); 
+  context.fillRect(X_mouse-15,Y_mouse-80,10,10); 
    // console.log(coordinates);
    
 
@@ -339,7 +339,8 @@ const Board=()=> {
        const Y_mouse=clientY;
        setcoordinates({X_mouse,Y_mouse});
        Coordinates=coordinates;
-         emmiter();
+         emmiter_mouse();
+
       
       if(!viewonly)
         {
@@ -384,7 +385,7 @@ const Board=()=> {
       //  const X_mouse=X2;
       //  const Y_mouse=Y2;
       //  setcoordinates({X_mouse,Y_mouse});
-       emmiter();
+    //   emmiter();
      //  Ctx.strokeRect(preX,preY,clientX,clientY);
      }
     }
@@ -405,8 +406,9 @@ const Board=()=> {
      // const ctx=Canvas.getContext('2d');
      Ctx.stroke();
       }
-      else if(todraw==="Rectangle")
+      else if(todraw==="Rectangle"||todraw==="Line")
       {
+        emmiter();
        // Ctx.strokeRect(preX,preY,clientX-preX,clientY-preY);
       } 
         }
@@ -422,11 +424,15 @@ const Board=()=> {
   function emmiter()
     {
       socket.emit('draw',elements); 
-      socket.emit('mouse',coordinates);
-      console.log("emmited",coordinates);
+      //console.log("emmited",elements);
 
     }
-    
+    function emmiter_mouse()
+    {
+      socket.emit('mouse',coordinates);
+     // console.log("emmited",coordinates);
+ 
+    }
   
 
 
