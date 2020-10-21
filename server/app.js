@@ -21,8 +21,8 @@ io.on('connection', socket=>{
      socket.on('mouse',(coordinates)=>{
         socket.to('room').emit('mouse',coordinates);
    // console.log(coordinates);
-    });
-
+   
+   });
 
     // socket.on('element',(element)=>{
     //     console.log(element);

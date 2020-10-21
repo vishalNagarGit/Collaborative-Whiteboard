@@ -65,31 +65,21 @@ var Coordinates=[];
 
 socket.on('draw',(emmitedArray)=>{
  // console.log("emited array",emmitedArray);
-  
-    
 
-  emitedElements.forEach((element)=>
-  {
-    context.fillStyle = 'white';
-    draw(element);
-  });
-  
-  
+console.log("array");
+console.log(emmitedArray);
   emitedElements=emmitedArray;
 
 
   emitedElements.forEach((element)=>
   {
-    context.fillStyle = 'black';
+    context.fillStyle = 'red';
     draw(element);
   });
 
-
- 
-  
-
-
 });
+
+
 
 socket.on('mouse',(coordinates)=>{
  // console.log("hi");
@@ -109,12 +99,11 @@ socket.on('mouse',(coordinates)=>{
 });
 
 
-
-
-
 const Board=()=> {
-     
-      
+  
+       
+
+        
 
 
      const [test,setTest]=useState(false);
@@ -136,26 +125,7 @@ const Board=()=> {
   
     // const [isChanged,setChanged]=useState(false);
 
-  async function updatecanvas(){
-     // setChanged(true);
-      const canvas=document.getElementById("whiteboard");
-     context=canvas.getContext('2d');
-      setContext(context);
-      context.clearRect(0,0,window.innerWidth,window.innerHeight);
-     
-     emitedElements.forEach((element)=>
-      {
-        draw(element);
-       
-       // console.log(elements.length);
-       
-   //  console.log(element);
-      }
-     );
-
- 
-   }
-
+  
     async function updateUndoCanvas(){
 
        const canvas=document.getElementById("whiteboard");
@@ -190,52 +160,6 @@ const Board=()=> {
      
       
     
-
-// const draw=(element)=>{
-//      //  console.log(element);
-//       const {X1,Y1,X2,Y2,drawing}=element;
-     
-//      // console.log(X1+" "+Y1+" "+X2+" "+Y2);
-
-                          
-   
-//     if(drawing==="Rectangle")
-//    {
-//     Ctx.strokeRect(X1,Y1,X2-X1,Y2-Y1);
-    
-//    }
-//    else if(drawing==="Line")
-//    {
-//     Ctx.beginPath(); 
-//     Ctx.moveTo(X1,Y1);
-//     Ctx.lineTo(X2,Y2);
-//     Ctx.stroke();
-    
-//    }
-//    else if(drawing==="Pen")
-//    {
-//       Ctx.beginPath();
-//       const {pointarray,drawing}=element;
-//       if(pointarray.length>0)
-//       {
-//       const {X1,Y1}=pointarray[0];
-//       Ctx.moveTo(X1,Y1);
-  
-//       pointarray.map( ({X1,Y1})=>{
-//         //console.log(X1,Y1);
-        
-//         Ctx.lineTo(X1,Y1);
-//         Ctx.stroke();
-        
-//       });
-//     }
-//    }
-  
-  
-   
-//      return ;
-  
-//     }
     const undo=()=>{
        const present_state=elements;
        if(present_state.length>0)
@@ -254,29 +178,32 @@ const Board=()=> {
     // handle change of radio buttons
     const handleChange= (event)=>{
       setdraw(event.target.value);
-     if(event.target.value==="Clear")
-     {
-       clear();
-     }
      
   
     }
-    
-  
+    // const clear=()=>{
+    //   Clear();
+    //   Clear();
+    // }
+      
   
     // clear the screen
-    const clear=( )=>{
+    const Clear=( )=>{
         Ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
-       setelements([]);
-       emitedElements=[];
-       socket.emit('clear');
-       emmiter();
+      
+        setelements([],()=>{
+           console.log("callback");          
+          emmiter();
+     
+        });
+        emmiter2();
+        
+    //   updateUndoCanvas();
+   //    emitedElements=[];
+     //  socket.emit('clear');
       }
 
-      socket.on('clear',()=>{
-        setelements([]);
-        emitedElements=[];
-      });
+      
     
     // handling the clicking down of mouse
     const handleMouseDown= (event)=>{
@@ -419,7 +346,10 @@ const Board=()=> {
     // calls each time when layout changes
     
     
-   
+   function emmiter2()
+   {
+     socket.emit('draw',[]);
+   }
 
   function emmiter()
     {
@@ -433,13 +363,14 @@ const Board=()=> {
      // console.log("emmited",coordinates);
  
     }
-  
+    
+
 
 
 
  useEffect( ()=>{
        
-      console.log("useeffect called");   
+     // console.log("useeffect called");   
 
       const canvas=document.getElementById("whiteboard");
        context=canvas.getContext('2d');
@@ -452,7 +383,7 @@ const Board=()=> {
     
       }
      );
-
+     
      emitedElements.forEach((element)=>
       {
         draw(element);
@@ -475,10 +406,13 @@ const Board=()=> {
             <FormControlLabel value="Rectangle" control={<Radio />} label="Rectangle" />
             <FormControlLabel value="Line" control={<Radio />} label="Line" />
           
-             <FormControlLabel value="Clear" control={<Radio />} label="Clear" />
-          
+             {/* <FormControlLabel value="Clear" control={<Radio />} label="Clear" />
+           */}
+
         </RadioGroup>
       </FormControl>
+      <Button  onClick={Clear}> Clear</Button>
+     
       <Button  onClick={undo}> Undo</Button>
       {viewonly?   <Button  onClick={()=>setviewonly(false)}> Change to editable mode</Button>:<Button  onClick={()=>setviewonly(true)}> Change to view mode</Button>    }
       
